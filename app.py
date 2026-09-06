@@ -30,9 +30,75 @@ def load_llm():
 # =========================================================
 
 st.set_page_config(
-    page_title="Assistant RAG",
-    page_icon="🤖",
+    page_title="DocuRAG — Assistant documentaire",
+    page_icon="📘",
     layout="wide"
+)
+
+# =========================================================
+# IDENTITÉ VISUELLE DE DOCURAG
+# =========================================================
+
+st.markdown(
+    """
+    <style>
+    .stApp {
+    background: linear-gradient(135deg, #dce8f5 0%, #c8d8e8 100%);
+}
+
+    [data-testid="stSidebar"] {
+        background-color: #102a43;
+    }
+
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] label {
+        color: #f4f8fc;
+    }
+
+    .docurag-title {
+        color: #102a43;
+        font-size: 2.5rem;
+        font-weight: 750;
+        margin-bottom: 0.2rem;
+    }
+
+    .docurag-subtitle {
+        color: #486581;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .document-card {
+        background-color: #ffffff;
+        border-left: 5px solid #168aad;
+        padding: 0.8rem 1rem;
+        border-radius: 0 0.5rem 0.5rem 0;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 2px 8px rgba(16, 42, 67, 0.08);
+    }
+
+    [data-testid="stChatMessage"] {
+    background-color: #e7eef6;
+    border: 1px solid #b7c9da;
+    border-radius: 0.8rem;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.7rem;
+}
+
+[data-testid="stChatMessage"] p {
+    color: #102a43;
+}
+
+[data-testid="stChatInput"] {
+    background-color: #d5e2ef;
+    border-radius: 0.7rem;
+}
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 
@@ -69,11 +135,16 @@ embeddings = load_embeddings()
 
 with st.sidebar:
 
+    st.markdown("## 📘 DocuRAG")
+    st.caption("Votre espace documentaire local")
+
+    st.divider()
+
     st.header("📚 Documents")
 
     # 1. Téléchargement
     uploaded_files = st.file_uploader(
-        "Télécharger PDF ou TXT",
+        "Importer vos documents PDF ou TXT",
         type=["pdf", "txt", "md"],
         accept_multiple_files=True
     )
@@ -109,6 +180,13 @@ with st.sidebar:
 
     st.divider()
 
+    if st.button("🗑️ Nouvelle session", use_container_width=True):
+        st.session_state.vector_store = None
+        st.session_state.messages = []
+        st.session_state.indexed_files = []
+        st.rerun()
+    
+
     # 3. Toggle LLM
     llm_enabled = st.toggle("🤖 Activer le LLM", value=False)
     if llm_enabled:
@@ -126,8 +204,17 @@ with st.sidebar:
 # --------------------------------------------------
 # ZONE PRINCIPALE — CHAT
 # --------------------------------------------------
-st.title("🤖 Assistant documentaire")
-st.caption("Posez des questions sur vos documents.")
+st.markdown(
+    '<div class="docurag-title">📘 DocuRAG</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="docurag-subtitle">'
+    "Assistant documentaire local — interrogez vos documents en toute confidentialité."
+    '</div>',
+    unsafe_allow_html=True
+)
 
 # Historique
 for msg in st.session_state.messages:
