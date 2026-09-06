@@ -2,13 +2,31 @@ from langchain_core.prompts import PromptTemplate
 from langchain_ollama import OllamaLLM
 
 
+# def retrieve_relevant_chunks(vector_store, question: str, k: int = 4):
+#     """
+#     Étape 3 & 4 : interroge ChromaDB sans aucun modèle génératif.
+#     Retourne les k chunks dont le sens est le plus proche de la question.
+#     """
+#     return vector_store.similarity_search(question, k=k)
+
 def retrieve_relevant_chunks(vector_store, question: str, k: int = 4):
     """
-    Étape 3 & 4 : interroge ChromaDB sans aucun modèle génératif.
-    Retourne les k chunks dont le sens est le plus proche de la question.
+    Recherche les chunks les plus proches de la question,
+    puis supprime les doublons exacts.
     """
-    return vector_store.similarity_search(question, k=k)
+    raw_results = vector_store.similarity_search(question, k=k)
 
+    unique_results = []
+    seen_contents = set()
+
+    for document in raw_results:
+        normalized_content = " ".join(document.page_content.split())
+
+        if normalized_content not in seen_contents:
+            seen_contents.add(normalized_content)
+            unique_results.append(document)
+
+    return unique_results
 
 def build_context(documents) -> str:
     """
