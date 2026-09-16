@@ -88,13 +88,42 @@ st.markdown(
     margin-bottom: 0.7rem;
 }
 
-[data-testid="stChatMessage"] p {
-    color: #102a43;
+[data-testid="stChatMessage"],
+[data-testid="stChatMessage"] *,
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] span,
+[data-testid="stChatMessage"] div {
+    color: #102a43 !important;
 }
 
 [data-testid="stChatInput"] {
     background-color: #d5e2ef;
     border-radius: 0.7rem;
+}
+
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+    gap: 0.35rem;
+}
+
+[data-testid="stSidebar"] .stMarkdown {
+    margin-bottom: 0.15rem;
+}
+
+[data-testid="stSidebar"] hr {
+    margin: 0.35rem 0;
+}
+
+[data-testid="stSidebar"] .stButton button {
+    padding: 0.35rem 0.6rem;
+    min-height: 2.1rem;
+}
+
+[data-testid="stSidebar"] .stFileUploader {
+    margin-bottom: 0.2rem;
+}
+
+[data-testid="stSidebar"] small {
+    font-size: 0.78rem;
 }
     </style>
     """,
@@ -178,7 +207,7 @@ with st.sidebar:
                 st.session_state.indexed_files = [f.name for f in uploaded_files]
                 st.success(f"{len(uploaded_files)} fichier(s) indexé(s).")
 
-    st.divider()
+    # st.divider()
 
     if st.button("🗑️ Nouvelle session", use_container_width=True):
         st.session_state.vector_store = None
